@@ -1,4 +1,10 @@
-from sqlmodel import Field, SQLModel
+from typing import TYPE_CHECKING
+
+from sqlmodel import Field, Relationship, SQLModel
+
+# Use TYPE_CHECKING to avoid circular import
+if TYPE_CHECKING:
+    from .user import User
 
 
 # Base class with common fields
@@ -13,6 +19,9 @@ class Task(TaskBase, table=True):
     __tablename__ = "tasks"
 
     id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="users.id")
+    # Use string forward reference
+    user: "User" = Relationship(back_populates="tasks")
 
 
 # Public schema (what gets returned to clients)
