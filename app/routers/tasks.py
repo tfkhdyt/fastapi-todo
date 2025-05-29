@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.internal.db import SessionDep
+from app.internal.models.task import Task, TaskCreate, TaskPublic, TaskUpdate
 from app.internal.security import CurrentUserDep
-from app.models.task import Task, TaskCreate, TaskPublic, TaskUpdate
 
 router = APIRouter(tags=["tasks"])
 

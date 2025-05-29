@@ -9,9 +9,9 @@ from passlib.context import CryptContext
 from sqlmodel import select
 
 from app.internal.db import SessionDep
+from app.internal.models.jwt import Token, TokenData
+from app.internal.models.user import User
 from app.internal.settings import SettingsDep
-from app.models.jwt import Token, TokenData
-from app.models.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

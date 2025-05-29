@@ -5,6 +5,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 
 from app.internal.db import SessionDep
+from app.internal.models.jwt import Token, TokenData
+from app.internal.models.user import User, UserCreate, UserPublic
 from app.internal.security import (
     CurrentUserDep,
     create_access_token,
@@ -12,8 +14,6 @@ from app.internal.security import (
     verify_password,
 )
 from app.internal.settings import SettingsDep
-from app.models.jwt import Token, TokenData
-from app.models.user import User, UserCreate, UserPublic
 
 router = APIRouter(tags=["auth"])
 
