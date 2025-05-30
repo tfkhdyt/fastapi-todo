@@ -58,11 +58,11 @@ async def signIn(
     user = user_result.first()
     if not user:
         logger.warning(f"Sign-in attempt for non-existent user: {form_data.username}")
-        raise HTTPException(status_code=401, detail="Username not found")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     if not verify_password(form_data.password, user.password):
         logger.warning(f"Invalid password attempt for user: {form_data.username}")
-        raise HTTPException(status_code=401, detail="Invalid password")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token = create_access_token(
         data=TokenData(sub=user.username),
