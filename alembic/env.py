@@ -8,7 +8,7 @@ from alembic import context
 # Import your models here so their metadata is registered with SQLModel.metadata
 # This assumes your models are discoverable from the app package.
 # You might need to adjust the import path based on your project structure.
-from app.internal.models import task, user  # noqa - to register models
+from app.internal.models import *  # noqa: F403
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
