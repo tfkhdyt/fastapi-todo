@@ -11,3 +11,4 @@ wheels/
 
 database.db
 .env
+config.yaml

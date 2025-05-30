@@ -208,6 +208,7 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pyjwt" },
     { name = "python-dotenv" },
+    { name = "pyyaml" },
     { name = "sqlmodel" },
     { name = "types-passlib" },
 ]
@@ -222,6 +223,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "pyjwt", specifier = ">=2.10.1" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "sqlmodel", specifier = ">=0.0.24" },
     { name = "types-passlib", specifier = ">=1.7.7.20250516" },
 ]

@@ -10,7 +10,7 @@ from app.internal.settings import get_settings
 settings = get_settings()
 
 # Use a different URL for async, note aiosqlite driver
-async_sqlite_url = f"sqlite+aiosqlite:///{settings.sqlite_file_name}"
+async_sqlite_url = f"sqlite+aiosqlite:///{settings.database.sqlite.file_name}"
 
 # The connect_args are specific to aiosqlite and other async drivers
 # For aiosqlite, check_same_thread is not needed as it's handled differently.
@@ -18,7 +18,7 @@ async_engine = create_async_engine(async_sqlite_url)
 
 # Synchronous engine for Alembic (if it doesn't support async directly)
 # or for specific synchronous tasks if any.
-sync_sqlite_url = f"sqlite:///{settings.sqlite_file_name}"
+sync_sqlite_url = f"sqlite:///{settings.database.sqlite.file_name}"
 sync_engine = create_engine(sync_sqlite_url, connect_args={"check_same_thread": False})
 
 

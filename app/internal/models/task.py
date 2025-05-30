@@ -4,8 +4,6 @@ from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.internal.validators import (
-    TASK_DESCRIPTION_FIELD_CONFIG,
-    TASK_TITLE_FIELD_CONFIG,
     validate_task_description,
     validate_task_title,
 )
@@ -17,14 +15,26 @@ if TYPE_CHECKING:
 
 # Base class with common fields
 class TaskBase(SQLModel):
-    title: str = Field(index=True, **TASK_TITLE_FIELD_CONFIG)
-    description: str | None = Field(default=None, **TASK_DESCRIPTION_FIELD_CONFIG)
+    title: str = Field(
+        index=True,
+        min_length=1,
+        max_length=200,
+        description="Task title must be 1-200 characters long",
+    )
+    description: str | None = Field(
+        default=None,
+        max_length=1000,
+        description="Task description must not exceed 1000 characters",
+    )
     done: bool = Field(default=False)
 
     @field_validator("title")
     @classmethod
     def validate_title_field(cls, v: str) -> str:
-        return validate_task_title(v)
+        validated = validate_task_title(v)
+        if validated is None:
+            raise ValueError("Task title cannot be None")
+        return validated
 
     @field_validator("description")
     @classmethod
@@ -49,13 +59,24 @@ class TaskPublic(TaskBase):
 
 # Create schema (for creating new tasks)
 class TaskCreate(SQLModel):
-    title: str = Field(**TASK_TITLE_FIELD_CONFIG)
-    description: str | None = Field(default=None, **TASK_DESCRIPTION_FIELD_CONFIG)
+    title: str = Field(
+        min_length=1,
+        max_length=200,
+        description="Task title must be 1-200 characters long",
+    )
+    description: str | None = Field(
+        default=None,
+        max_length=1000,
+        description="Task description must not exceed 1000 characters",
+    )
 
     @field_validator("title")
     @classmethod
     def validate_title_field(cls, v: str) -> str:
-        return validate_task_title(v)
+        validated = validate_task_title(v)
+        if validated is None:
+            raise ValueError("Task title cannot be None")
+        return validated
 
     @field_validator("description")
     @classmethod
@@ -65,8 +86,17 @@ class TaskCreate(SQLModel):
 
 # Update schema (for updating existing tasks)
 class TaskUpdate(SQLModel):
-    title: str | None = Field(default=None, **TASK_TITLE_FIELD_CONFIG)
-    description: str | None = Field(default=None, **TASK_DESCRIPTION_FIELD_CONFIG)
+    title: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=200,
+        description="Task title must be 1-200 characters long",
+    )
+    description: str | None = Field(
+        default=None,
+        max_length=1000,
+        description="Task description must not exceed 1000 characters",
+    )
     done: bool | None = None
 
     @field_validator("title")

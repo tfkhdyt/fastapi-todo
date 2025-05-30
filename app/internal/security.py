@@ -33,12 +33,12 @@ def create_access_token(
         expire = datetime.now(UTC) + expires_delta
     else:
         expire = datetime.now(UTC) + timedelta(
-            minutes=settings.jwt_access_token_expire_minutes
+            minutes=settings.jwt.access_token_expire_minutes
         )
     data.exp = expire
 
     encoded_jwt = jwt.encode(
-        data.model_dump(), settings.jwt_secret_key, algorithm=settings.jwt_algorithm
+        data.model_dump(), settings.jwt.secret_key, algorithm=settings.jwt.algorithm
     )
 
     return Token(access_token=encoded_jwt, token_type="bearer")
@@ -47,7 +47,7 @@ def create_access_token(
 def decode_token(token: str, settings: SettingsDep) -> TokenData:
     try:
         payload = jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+            token, settings.jwt.secret_key, algorithms=[settings.jwt.algorithm]
         )
         return TokenData(**payload)
     except InvalidTokenError:
@@ -65,7 +65,7 @@ async def get_current_user(
     settings: SettingsDep,
 ):
     payload = decode_token(token, settings)
-    username = payload.get("sub")
+    username = payload.sub
 
     if not username:
         raise HTTPException(status_code=401, detail="Invalid token payload")

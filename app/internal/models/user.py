@@ -17,7 +17,13 @@ if TYPE_CHECKING:
 
 # Base class with common fields
 class UserBase(SQLModel):
-    username: str = Field(unique=True, index=True, **USERNAME_FIELD_CONFIG)
+    username: str = Field(
+        unique=True,
+        index=True,
+        min_length=3,
+        max_length=50,
+        description="Username must be 3-50 characters long",
+    )
 
     @field_validator("username")
     @classmethod

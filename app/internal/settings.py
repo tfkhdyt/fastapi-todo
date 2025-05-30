@@ -2,16 +2,45 @@ from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+    YamlConfigSettingsSource,
+)
+
+
+class SqliteSettings(BaseModel):
+    file_name: str = "database.db"
+
+
+class DatabaseSettings(BaseModel):
+    sqlite: SqliteSettings
+
+
+class JwtSettings(BaseModel):
+    secret_key: str
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
 
 
 class Settings(BaseSettings):
-    sqlite_file_name: str = "database.db"
-    jwt_secret_key: str
-    jwt_algorithm: str = "HS256"
-    jwt_access_token_expire_minutes: int = 30
+    database: DatabaseSettings
+    jwt: JwtSettings
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(yaml_file="config.yaml")
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        return (YamlConfigSettingsSource(settings_cls),)
 
 
 @lru_cache

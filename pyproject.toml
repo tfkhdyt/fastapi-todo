@@ -15,4 +15,5 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "sqlmodel>=0.0.24",
     "types-passlib>=1.7.7.20250516",
+    "pyyaml>=6.0.2",
 ]

@@ -1,0 +1,8 @@
+database:
+  sqlite:
+    file_name: "database.db"
+
+jwt:
+  secret_key: "YOUR_JWT_SECRET_KEY"
+  algorithm: "HS256"
+  access_token_expire_minutes: 30
