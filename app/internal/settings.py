@@ -6,8 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    sqlite_url: str = "sqlite:///database.db"
-    jwt_secret_key: str = "YOUR_SECRET_KEY"
+    sqlite_file_name: str = "database.db"
+    jwt_secret_key: str
     jwt_algorithm: str = "HS256"
     jwt_access_token_expire_minutes: int = 30
 

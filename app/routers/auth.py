@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -16,14 +17,17 @@ from app.internal.security import (
 from app.internal.settings import SettingsDep
 
 router = APIRouter(tags=["auth"])
+logger = logging.getLogger(__name__)
 
 
 @router.post("/auth/sign-up", response_model=UserPublic, status_code=201)
-def signUp(payload: UserCreate, session: SessionDep):
-    existing_user = session.exec(
+async def signUp(payload: UserCreate, session: SessionDep):
+    existing_user_result = await session.exec(
         select(User).where(User.username == payload.username)
-    ).first()
+    )
+    existing_user = existing_user_result.first()
     if existing_user:
+        logger.warning(f"Sign-up attempt with existing username: {payload.username}")
         raise HTTPException(status_code=400, detail="Username already exists")
 
     hashed_password = get_password_hash(payload.password)
@@ -33,8 +37,8 @@ def signUp(payload: UserCreate, session: SessionDep):
     )
 
     session.add(new_user)
-    session.commit()
-    session.refresh(new_user)
+    await session.commit()
+    await session.refresh(new_user)
 
     return new_user
 
@@ -43,26 +47,30 @@ FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
 @router.post("/token", response_model=Token)
-def signIn(
+async def signIn(
     form_data: FormDep,
     session: SessionDep,
     settings: SettingsDep,
 ):
-    user = session.exec(select(User).where(User.username == form_data.username)).first()
+    user_result = await session.exec(
+        select(User).where(User.username == form_data.username)
+    )
+    user = user_result.first()
     if not user:
+        logger.warning(f"Sign-in attempt for non-existent user: {form_data.username}")
         raise HTTPException(status_code=401, detail="Username not found")
 
     if not verify_password(form_data.password, user.password):
+        logger.warning(f"Invalid password attempt for user: {form_data.username}")
         raise HTTPException(status_code=401, detail="Invalid password")
 
     access_token = create_access_token(
         data=TokenData(sub=user.username),
         settings=settings,
     )
-
     return access_token
 
 
 @router.get("/auth/me", response_model=UserPublic)
-def me(current_user: CurrentUserDep):
+async def me(current_user: CurrentUserDep):
     return current_user

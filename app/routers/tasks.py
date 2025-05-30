@@ -1,24 +1,31 @@
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import desc, select
 
 from app.internal.db import SessionDep
 from app.internal.models.task import Task, TaskCreate, TaskPublic, TaskUpdate
 from app.internal.security import CurrentUserDep
 
 router = APIRouter(tags=["tasks"])
+logger = logging.getLogger(__name__)
 
 
-def get_task_owner(
+async def get_task_owner(
     task_id: int,
     current_user: CurrentUserDep,
     session: SessionDep,
 ):
-    task = session.get(Task, task_id)
+    task = await session.get(Task, task_id)
     if not task:
+        logger.warning(f"Task not found: {task_id} for user {current_user.username}")
         raise HTTPException(status_code=404, detail="Task not found")
 
     if task.user_id != current_user.id:
+        logger.warning(
+            f"User {current_user.username} attempted to access unowned task {task_id}"
+        )
         raise HTTPException(
             status_code=403, detail="You are not the owner of this task"
         )
@@ -29,17 +36,27 @@ TaskOwnerDep = Annotated[Task, Depends(get_task_owner)]
 
 
 @router.get("/tasks", response_model=list[TaskPublic])
-def get_all_tasks(session: SessionDep, current_user: CurrentUserDep):
-    return current_user.tasks
+async def get_all_tasks(current_user: CurrentUserDep, session: SessionDep):
+    result = await session.exec(
+        select(Task).where(Task.user_id == current_user.id).order_by(desc(Task.id))
+    )
+    tasks = result.all()
+    return tasks
 
 
 @router.post("/tasks", response_model=TaskPublic, status_code=201)
-def create_task(payload: TaskCreate, session: SessionDep, current_user: CurrentUserDep):
-    task_db = Task(**payload.model_dump(), user_id=current_user.id)
+async def create_task(
+    payload: TaskCreate, current_user: CurrentUserDep, session: SessionDep
+):
+    task_db = Task(
+        title=payload.title,
+        description=payload.description,
+        user_id=current_user.id,
+    )
 
     session.add(task_db)
-    session.commit()
-    session.refresh(task_db)
+    await session.commit()
+    await session.refresh(task_db)
 
     return task_db
 
@@ -52,7 +69,7 @@ def create_task(payload: TaskCreate, session: SessionDep, current_user: CurrentU
         403: {"description": "You are not the owner of this task"},
     },
 )
-def get_task_by_id(task_owner: TaskOwnerDep):
+async def get_task_by_id(task_owner: TaskOwnerDep, current_user: CurrentUserDep):
     return task_owner
 
 
@@ -64,13 +81,17 @@ def get_task_by_id(task_owner: TaskOwnerDep):
         403: {"description": "You are not the owner of this task"},
     },
 )
-def update_task(task: TaskOwnerDep, payload: TaskUpdate, session: SessionDep):
+async def update_task(
+    task: TaskOwnerDep,
+    payload: TaskUpdate,
+    session: SessionDep,
+):
     task_data = payload.model_dump(exclude_unset=True)
     task.sqlmodel_update(task_data)
 
     session.add(task)
-    session.commit()
-    session.refresh(task)
+    await session.commit()
+    await session.refresh(task)
 
     return task
 
@@ -82,8 +103,6 @@ def update_task(task: TaskOwnerDep, payload: TaskUpdate, session: SessionDep):
         403: {"description": "You are not the owner of this task"},
     },
 )
-def delete_task(task: TaskOwnerDep, session: SessionDep):
-    session.delete(task)
-    session.commit()
-
-    return {"message": "Task deleted successfully"}
+async def delete_task(task: TaskOwnerDep, session: SessionDep):
+    await session.delete(task)
+    await session.commit()

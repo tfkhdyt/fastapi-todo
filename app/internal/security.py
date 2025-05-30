@@ -60,7 +60,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 TokenDep = Annotated[str, Depends(oauth2_scheme)]
 
 
-def get_current_user(
+async def get_current_user(
     token: TokenDep,
     session: SessionDep,
     settings: SettingsDep,
@@ -71,7 +71,8 @@ def get_current_user(
     if not username:
         raise HTTPException(status_code=401, detail="Invalid token payload")
 
-    user = session.exec(select(User).where(User.username == username)).first()
+    user_result = await session.exec(select(User).where(User.username == username))
+    user = user_result.first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
