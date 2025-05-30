@@ -23,7 +23,7 @@ def upgrade() -> None:
     """Upgrade schema."""
     op.create_table(
         "tasks",
-        sa.Column("id", sa.Integer, primary_key=True),
+        sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
         sa.Column("title", sa.String, nullable=False),
         sa.Column("description", sa.String, nullable=True),
         sa.Column("done", sa.Boolean, nullable=False, default=False),
