@@ -102,6 +102,7 @@ async def update_task(
         404: {"description": "Task not found"},
         403: {"description": "You are not the owner of this task"},
     },
+    status_code=204,
 )
 async def delete_task(task: TaskOwnerDep, session: SessionDep):
     await session.delete(task)
