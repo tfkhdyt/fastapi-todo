@@ -49,9 +49,8 @@ def decode_token(token: str, settings: SettingsDep) -> TokenData:
         payload = jwt.decode(
             token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
         )
-        return payload
-    except InvalidTokenError as e:
-        print(e)
+        return TokenData(**payload)
+    except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Failed to decode token")
 
 
