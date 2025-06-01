@@ -6,12 +6,12 @@ from sqlmodel import desc, select
 from app.internal.core.db import SessionDep
 from app.internal.core.security import CurrentUserDep
 from app.internal.models import Tag
-from app.internal.models.tag import TagCreate, TagUpdate
+from app.internal.models.tag import TagCreate, TagPublic, TagUpdate
 
 router = APIRouter(tags=["tags"])
 
 
-@router.get("/tags", response_model=list[Tag])
+@router.get("/tags", response_model=list[TagPublic])
 async def get_all_tags(current_user: CurrentUserDep, session: SessionDep):
     result = await session.exec(
         select(Tag).where(Tag.user_id == current_user.id).order_by(desc(Tag.id))
@@ -20,7 +20,7 @@ async def get_all_tags(current_user: CurrentUserDep, session: SessionDep):
     return tags
 
 
-@router.post("/tags", response_model=Tag, status_code=201)
+@router.post("/tags", response_model=TagPublic, status_code=201)
 async def create_tag(
     payload: TagCreate, current_user: CurrentUserDep, session: SessionDep
 ):
@@ -47,12 +47,12 @@ async def get_my_tag(tag_id: int, current_user: CurrentUserDep, session: Session
 GetMyTagDep = Annotated[Tag, Depends(get_my_tag)]
 
 
-@router.get("/tags/{tag_id}", response_model=Tag)
+@router.get("/tags/{tag_id}", response_model=TagPublic)
 async def get_tag_by_id(tag: GetMyTagDep):
     return tag
 
 
-@router.patch("/tags/{tag_id}", response_model=Tag)
+@router.patch("/tags/{tag_id}", response_model=TagPublic)
 async def update_tag(tag: GetMyTagDep, payload: TagUpdate, session: SessionDep):
     tag.sqlmodel_update(payload.model_dump(exclude_unset=True))
 

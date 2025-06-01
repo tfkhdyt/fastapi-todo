@@ -13,6 +13,10 @@ class Tag(TagBase, table=True):
     user_id: int = Field(foreign_key="users.id")
 
 
+class TagPublic(TagBase):
+    id: int
+
+
 class TagCreate(TagBase):
     pass
 
