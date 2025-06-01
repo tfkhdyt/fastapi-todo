@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 # Base class with common fields
 class TaskBase(SQLModel):
     title: str = Field(
-        index=True,
         min_length=1,
         max_length=200,
         description="Task title must be 1-200 characters long",

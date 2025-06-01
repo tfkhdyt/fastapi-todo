@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 class UserBase(SQLModel):
     username: str = Field(
         unique=True,
-        index=True,
         min_length=3,
         max_length=50,
         description="Username must be 3-50 characters long",
