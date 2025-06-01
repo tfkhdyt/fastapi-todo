@@ -69,7 +69,7 @@ async def create_task(
         403: {"description": "You are not the owner of this task"},
     },
 )
-async def get_task_by_id(task_owner: TaskOwnerDep, current_user: CurrentUserDep):
+async def get_task_by_id(task_owner: TaskOwnerDep):
     return task_owner
 
 
