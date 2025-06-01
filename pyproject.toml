@@ -16,4 +16,5 @@ dependencies = [
     "sqlmodel>=0.0.24",
     "types-passlib>=1.7.7.20250516",
     "pyyaml>=6.0.2",
+    "mypy>=1.16.0",
 ]
