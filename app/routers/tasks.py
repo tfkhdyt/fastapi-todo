@@ -2,10 +2,12 @@ import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import desc, select
+from sqlalchemy.orm import selectinload
+from sqlmodel import col, desc, select
 
 from app.internal.core.db import SessionDep
 from app.internal.core.security import CurrentUserDep
+from app.internal.models.tag import Tag
 from app.internal.models.task import Task, TaskCreate, TaskPublic, TaskUpdate
 
 router = APIRouter(tags=["tasks"])
@@ -38,7 +40,10 @@ TaskOwnerDep = Annotated[Task, Depends(get_task_owner)]
 @router.get("/tasks", response_model=list[TaskPublic])
 async def get_all_tasks(current_user: CurrentUserDep, session: SessionDep):
     result = await session.exec(
-        select(Task).where(Task.user_id == current_user.id).order_by(desc(Task.id))
+        select(Task)
+        .options(selectinload(getattr(Task, "tags")))
+        .where(Task.user_id == current_user.id)
+        .order_by(desc(Task.id))
     )
     tasks = result.all()
     return tasks
@@ -48,10 +53,22 @@ async def get_all_tasks(current_user: CurrentUserDep, session: SessionDep):
 async def create_task(
     payload: TaskCreate, current_user: CurrentUserDep, session: SessionDep
 ):
+    if not current_user.id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    tag_ids = payload.tag_ids
+    tags: list[Tag] = []
+    if tag_ids:
+        tag_result = await session.exec(select(Tag).where(col(Tag.id).in_(tag_ids)))
+        tags = list(tag_result.all())
+        if len(tags) != len(tag_ids):
+            raise HTTPException(status_code=404, detail="One or more tags not found")
+
     task_db = Task(
         title=payload.title,
         description=payload.description,
         user_id=current_user.id,
+        tags=tags,
     )
 
     session.add(task_db)

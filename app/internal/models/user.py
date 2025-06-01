@@ -27,7 +27,10 @@ class UserBase(SQLModel):
     @field_validator("username")
     @classmethod
     def validate_username_field(cls, v: str) -> str:
-        return validate_username(v)
+        validated = validate_username(v)
+        if validated is None:
+            raise ValueError("Username cannot be None")
+        return validated
 
 
 # Public class for returning user data (excludes sensitive fields)
@@ -42,7 +45,10 @@ class UserCreate(UserBase):
     @field_validator("password")
     @classmethod
     def validate_password_field(cls, v: str) -> str:
-        return validate_password(v)
+        validated = validate_password(v)
+        if validated is None:
+            raise ValueError("Password cannot be None")
+        return validated
 
 
 # Update class for user updates (all fields optional)
@@ -63,7 +69,7 @@ class UserUpdate(SQLModel):
 
 # Database table model
 class User(UserBase, table=True):
-    __tablename__ = "users"
+    __tablename__: str = "users"
 
     id: int | None = Field(default=None, primary_key=True)
     password: str  # This stores the hashed password

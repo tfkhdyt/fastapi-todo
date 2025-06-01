@@ -24,6 +24,9 @@ async def get_all_tags(current_user: CurrentUserDep, session: SessionDep):
 async def create_tag(
     payload: TagCreate, current_user: CurrentUserDep, session: SessionDep
 ):
+    if not current_user.id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     tag_db = Tag(name=payload.name, user_id=current_user.id)
 
     session.add(tag_db)

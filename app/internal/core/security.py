@@ -11,7 +11,7 @@ from sqlmodel import select
 from app.internal.core.db import SessionDep
 from app.internal.core.settings import SettingsDep
 from app.internal.models.jwt import Token, TokenData
-from app.internal.models.user import User
+from app.internal.models.user import User, UserPublic
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -75,7 +75,7 @@ async def get_current_user(
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
-    return user
+    return UserPublic(**user.model_dump())
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]

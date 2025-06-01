@@ -10,6 +10,8 @@ from typing import Sequence, Union
 
 import sqlalchemy as sa
 import sqlmodel
+import sqlmodel.sql
+import sqlmodel.sql.sqltypes
 
 from alembic import op
 
