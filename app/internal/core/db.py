@@ -2,7 +2,7 @@ from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine
-from sqlmodel import Session, create_engine  # Keep for Alembic if needed
+from sqlmodel import create_engine  # Keep for Alembic if needed
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.internal.core.settings import get_settings
@@ -28,9 +28,3 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 SessionDep = Annotated[AsyncSession, Depends(get_async_session)]
-
-
-# If you need a synchronous session for Alembic's env.py or other sync parts:
-def get_sync_session():
-    with Session(sync_engine) as session:
-        yield session

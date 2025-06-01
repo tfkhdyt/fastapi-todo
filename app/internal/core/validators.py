@@ -134,25 +134,25 @@ def validate_task_description(description: Optional[str]) -> Optional[str]:
 
 
 # Field configuration constants for reusability
-USERNAME_FIELD_CONFIG = {
-    "min_length": 3,
-    "max_length": 50,
-    "description": "Username must be 3-50 characters long",
-}
-
-PASSWORD_FIELD_CONFIG = {
-    "min_length": 8,
-    "max_length": 128,
-    "description": "Password must be 8-128 characters long",
-}
-
-TASK_TITLE_FIELD_CONFIG = {
-    "min_length": 1,
-    "max_length": 200,
-    "description": "Task title must be 1-200 characters long",
-}
-
-TASK_DESCRIPTION_FIELD_CONFIG = {
-    "max_length": 1000,
-    "description": "Task description must not exceed 1000 characters",
-}
+# USERNAME_FIELD_CONFIG = {
+#     "min_length": 3,
+#     "max_length": 50,
+#     "description": "Username must be 3-50 characters long",
+# }
+#
+# PASSWORD_FIELD_CONFIG = {
+#     "min_length": 8,
+#     "max_length": 128,
+#     "description": "Password must be 8-128 characters long",
+# }
+#
+# TASK_TITLE_FIELD_CONFIG = {
+#     "min_length": 1,
+#     "max_length": 200,
+#     "description": "Task title must be 1-200 characters long",
+# }
+#
+# TASK_DESCRIPTION_FIELD_CONFIG = {
+#     "max_length": 1000,
+#     "description": "Task description must not exceed 1000 characters",
+# }

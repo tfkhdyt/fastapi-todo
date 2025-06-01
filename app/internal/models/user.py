@@ -54,29 +54,29 @@ class UserCreate(UserBase):
 
 
 # Update class for user updates (all fields optional)
-class UserUpdate(SQLModel):
-    username: str | None = Field(
-        default=None,
-        min_length=3,
-        max_length=50,
-        description="Username must be 3-50 characters long",
-    )
-    password: str | None = Field(
-        default=None,
-        min_length=8,
-        max_length=128,
-        description="Password must be 8-128 characters long",
-    )
-
-    @field_validator("username")
-    @classmethod
-    def validate_username_field(cls, v: str | None) -> str | None:
-        return validate_username(v)
-
-    @field_validator("password")
-    @classmethod
-    def validate_password_field(cls, v: str | None) -> str | None:
-        return validate_password(v)
+# class UserUpdate(SQLModel):
+#     username: str | None = Field(
+#         default=None,
+#         min_length=3,
+#         max_length=50,
+#         description="Username must be 3-50 characters long",
+#     )
+#     password: str | None = Field(
+#         default=None,
+#         min_length=8,
+#         max_length=128,
+#         description="Password must be 8-128 characters long",
+#     )
+#
+#     @field_validator("username")
+#     @classmethod
+#     def validate_username_field(cls, v: str | None) -> str | None:
+#         return validate_username(v)
+#
+#     @field_validator("password")
+#     @classmethod
+#     def validate_password_field(cls, v: str | None) -> str | None:
+#         return validate_password(v)
 
 
 # Database table model
