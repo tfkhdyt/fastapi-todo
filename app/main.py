@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from app.routers import auth, tasks
+from app.routers import auth, tags, tasks
 
 # Configure basic logging
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +23,7 @@ async def generic_exception_handler(request: Request, exc: Exception):
 
 app.include_router(auth.router)
 app.include_router(tasks.router)
+app.include_router(tags.router)
 
 
 @app.get("/health")
