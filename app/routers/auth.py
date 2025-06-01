@@ -5,16 +5,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 
-from app.internal.db import SessionDep
-from app.internal.models.jwt import Token, TokenData
-from app.internal.models.user import User, UserCreate, UserPublic
-from app.internal.security import (
+from app.internal.core.db import SessionDep
+from app.internal.core.security import (
     CurrentUserDep,
+    SettingsDep,
     create_access_token,
     get_password_hash,
     verify_password,
 )
-from app.internal.settings import SettingsDep
+from app.internal.models.jwt import Token, TokenData
+from app.internal.models.user import User, UserCreate, UserPublic
 
 router = APIRouter(tags=["auth"])
 logger = logging.getLogger(__name__)

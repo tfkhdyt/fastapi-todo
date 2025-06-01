@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import desc, select
 
-from app.internal.db import SessionDep
+from app.internal.core.db import SessionDep
+from app.internal.core.security import CurrentUserDep
 from app.internal.models import Tag
 from app.internal.models.tag import TagCreate, TagUpdate
-from app.internal.security import CurrentUserDep
 
 router = APIRouter(tags=["tags"])
 

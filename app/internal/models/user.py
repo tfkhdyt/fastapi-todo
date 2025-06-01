@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.internal.validators import (
+from app.internal.core.validators import (
     PASSWORD_FIELD_CONFIG,
     USERNAME_FIELD_CONFIG,
     validate_password,

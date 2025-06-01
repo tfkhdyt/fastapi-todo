@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import Session, create_engine  # Keep for Alembic if needed
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.internal.settings import get_settings
+from app.internal.core.settings import get_settings
 
 settings = get_settings()
 

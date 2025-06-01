@@ -4,9 +4,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import desc, select
 
-from app.internal.db import SessionDep
+from app.internal.core.db import SessionDep
+from app.internal.core.security import CurrentUserDep
 from app.internal.models.task import Task, TaskCreate, TaskPublic, TaskUpdate
-from app.internal.security import CurrentUserDep
 
 router = APIRouter(tags=["tasks"])
 logger = logging.getLogger(__name__)

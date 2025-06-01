@@ -8,10 +8,10 @@ from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from sqlmodel import select
 
-from app.internal.db import SessionDep
+from app.internal.core.db import SessionDep
+from app.internal.core.settings import SettingsDep
 from app.internal.models.jwt import Token, TokenData
 from app.internal.models.user import User
-from app.internal.settings import SettingsDep
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
