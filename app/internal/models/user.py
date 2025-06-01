@@ -4,8 +4,6 @@ from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.internal.core.validators import (
-    PASSWORD_FIELD_CONFIG,
-    USERNAME_FIELD_CONFIG,
     validate_password,
     validate_username,
 )
@@ -40,7 +38,11 @@ class UserPublic(UserBase):
 
 # Create class for user registration (includes password, not hashed_password)
 class UserCreate(UserBase):
-    password: str = Field(**PASSWORD_FIELD_CONFIG)
+    password: str = Field(
+        min_length=8,
+        max_length=128,
+        description="Password must be 8-128 characters long",
+    )
 
     @field_validator("password")
     @classmethod
@@ -53,8 +55,18 @@ class UserCreate(UserBase):
 
 # Update class for user updates (all fields optional)
 class UserUpdate(SQLModel):
-    username: str | None = Field(default=None, **USERNAME_FIELD_CONFIG)
-    password: str | None = Field(default=None, **PASSWORD_FIELD_CONFIG)
+    username: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=50,
+        description="Username must be 3-50 characters long",
+    )
+    password: str | None = Field(
+        default=None,
+        min_length=8,
+        max_length=128,
+        description="Password must be 8-128 characters long",
+    )
 
     @field_validator("username")
     @classmethod
@@ -69,7 +81,7 @@ class UserUpdate(SQLModel):
 
 # Database table model
 class User(UserBase, table=True):
-    __tablename__: str = "users"
+    __tablename__ = "users"
 
     id: int | None = Field(default=None, primary_key=True)
     password: str  # This stores the hashed password

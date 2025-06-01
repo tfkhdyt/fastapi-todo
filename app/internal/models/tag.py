@@ -14,7 +14,7 @@ class TagBase(SQLModel):
 
 
 class Tag(TagBase, table=True):
-    __tablename__: str = "tags"
+    __tablename__ = "tags"
 
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(min_length=3, max_length=50)

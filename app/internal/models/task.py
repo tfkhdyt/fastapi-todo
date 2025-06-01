@@ -48,7 +48,7 @@ class TaskBase(SQLModel):
 
 # Table model
 class Task(TaskBase, table=True):
-    __tablename__: str = "tasks"
+    __tablename__ = "tasks"
 
     id: int | None = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="users.id")
